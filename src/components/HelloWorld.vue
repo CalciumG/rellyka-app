@@ -1,40 +1,65 @@
 <template>
   <div>
     <v-row no-gutters>
-      <v-col cols="2">
+      <v-col cols="12">
         <v-simple-table>
           <template v-slot:default>
             <thead>
-              Cal
               <tr>
-                <th class="text-left">Skill</th>
-                <th class="text-left">Level</th>
+                <th>Player</th>
+                <th v-for="item in calResult" :key="item.id" class="text-left">
+                  {{ item.id }}
+                </th>
               </tr>
             </thead>
+
             <tbody>
-              <tr v-for="item in calResult" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.level }}</td>
+              <tr>
+                <td>Cal</td>
+                <td
+                  class="level"
+                  v-for="item in calResult"
+                  :key="item.id"
+                  ref="level"
+                >
+                  {{ item.level }}
+                </td>
               </tr>
             </tbody>
-          </template>
-        </v-simple-table>
-      </v-col>
 
-      <v-col cols="2">
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              Town
-              <tr>
-                <th class="text-left">Skill</th>
-                <th class="text-left">Level</th>
-              </tr>
-            </thead>
             <tbody>
-              <tr v-for="item in townResult" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.level }}</td>
+              <tr>
+                <td>Town</td>
+                <td class="level" v-for="item in townResult" :key="item.id">
+                  {{ item.level }}
+                </td>
+              </tr>
+            </tbody>
+
+            <tbody>
+              <tr>
+                <td>Matt</td>
+                <td class="level" v-for="item in mattResult" :key="item.id">
+                  {{ item.level }}
+                </td>
+              </tr>
+            </tbody>
+
+            <tbody>
+              <tr>
+                <td>Phil</td>
+                <td class="level" v-for="item in philResult" :key="item.id">
+                  {{ item.level }}
+                </td>
+              </tr>
+            </tbody>
+
+            <tbody>
+              <tr>
+                <td>Dan</td>
+                <td class="level" v-for="item in djvResult" :key="item.id">
+                  {{ item.level }}
+                </td>
               </tr>
             </tbody>
           </template>
@@ -55,43 +80,54 @@ export default {
     return {
       calResult: "",
       townResult: "",
+      mattResult: "",
+      philResult: "",
+      djvResult: "",
       names: ["hosama0", "unholy304"],
       result: {},
+      baseUrl:
+        "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=",
       skills: [
-        "Overall",
-        "Attack",
-        "Defence",
-        "Strength",
-        "Hitpoints",
-        "Ranged",
-        "Prayer",
-        "Magic",
-        "Cooking",
-        "Woodcutting",
-        "Fletching",
-        "Fishing",
-        "Firemaking",
-        "Crafting",
-        "Smithing",
-        "Mining",
-        "Herblore",
-        "Agility",
-        "Thieving",
-        "Slayer",
-        "Farming",
-        "Runecrafting",
-        "Hunter",
-        "Construction",
+        "Ovr",
+        "Att",
+        "Def",
+        "St",
+        "Hp",
+        "Rng",
+        "Pray",
+        "Mage",
+        "Cook",
+        "Wc",
+        "Fletch",
+        "Fish",
+        "Fire",
+        "Craft",
+        "Smith",
+        "Mine",
+        "Herb",
+        "Agi",
+        "Thi",
+        "Slay",
+        "Farm",
+        "Rune",
+        "Hunt",
+        "Const",
       ],
     };
   },
 
   methods: {
-    async getCal() {
-      var skillCount = 0;
-      await this.fetchCal();
+    fetchUser(user, res) {
+      res = fetch(this.baseUrl + user)
+        .then((response) => response.text())
+        .then((data) => (res = data))
+        .catch((err) => console.log(err.message));
+      return res;
+    },
 
-      this.calResult = this.calResult
+    formatResult(str) {
+      var skillCount = 0;
+      return str
         .replace(/\n/g, " ")
         .split(" ")
         .map((str) => ({
@@ -103,51 +139,48 @@ export default {
         .slice(0, 24);
     },
 
-    fetchCal() {
-      var result = fetch(
-        "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=hosama0"
-      )
-        .then((response) => response.text())
-        .then((data) => (this.calResult = data))
-        .catch((err) => console.log(err.message));
-      return result;
+    async getCal(user, res) {
+      this.calResult = await this.fetchUser(user, res);
+      this.calResult = this.formatResult(this.calResult);
     },
 
-    async getTown() {
-      var skillCount = 0;
-      await this.fetchTown();
-
-      this.townResult = this.townResult
-        .replace(/\n/g, " ")
-        .split(" ")
-        .map((str) => ({
-          rank: str.split(",")[0],
-          level: str.split(",")[1],
-          exp: str.split(",")[2],
-          id: this.skills[skillCount++],
-        }))
-        .slice(0, 24);
+    async getTown(user, res) {
+      this.townResult = await this.fetchUser(user, res);
+      this.townResult = this.formatResult(this.townResult);
     },
 
-    fetchTown() {
-      var result = fetch(
-        "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=unholy304"
-      )
-        .then((response) => response.text())
-        .then((data) => (this.townResult = data))
-        .catch((err) => console.log(err.message));
-      return result;
+    async getMatt(user, res) {
+      this.mattResult = await this.fetchUser(user, res);
+      this.mattResult = this.formatResult(this.mattResult);
+    },
+
+    async getPhil(user, res) {
+      this.philResult = await this.fetchUser(user, res);
+      this.philResult = this.formatResult(this.philResult);
+    },
+
+    async getVol(user, res) {
+      this.djvResult = await this.fetchUser(user, res);
+      this.djvResult = this.formatResult(this.djvResult);
     },
   },
 
-  async mounted() {
-    this.getCal();
-    this.getTown();
+  mounted() {
+    this.$nextTick(() => {
+      console.log(this.$refs.level);
+    });
+  },
+
+  async created() {
+    this.getCal("Hosama0", this.calResult);
+    this.getTown("Unholy304", this.townResult);
+    this.getMatt("Merlin007100", this.mattResult);
+    this.getPhil("Philcold23", this.philResult);
+    this.getVol("Dee Jay Vee", this.djvResult);
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
@@ -162,5 +195,9 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.blue {
+  color: red;
 }
 </style>
