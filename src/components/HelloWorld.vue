@@ -1,42 +1,150 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div>
+    <v-row no-gutters>
+      <v-col cols="2">
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              Cal
+              <tr>
+                <th class="text-left">Skill</th>
+                <th class="text-left">Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in calResult" :key="item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ item.level }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-col>
+
+      <v-col cols="2">
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              Town
+              <tr>
+                <th class="text-left">Skill</th>
+                <th class="text-left">Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in townResult" :key="item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ item.level }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
-  }
-}
+    msg: String,
+  },
+
+  data() {
+    return {
+      calResult: "",
+      townResult: "",
+      names: ["hosama0", "unholy304"],
+      result: {},
+      skills: [
+        "Overall",
+        "Attack",
+        "Defence",
+        "Strength",
+        "Hitpoints",
+        "Ranged",
+        "Prayer",
+        "Magic",
+        "Cooking",
+        "Woodcutting",
+        "Fletching",
+        "Fishing",
+        "Firemaking",
+        "Crafting",
+        "Smithing",
+        "Mining",
+        "Herblore",
+        "Agility",
+        "Thieving",
+        "Slayer",
+        "Farming",
+        "Runecrafting",
+        "Hunter",
+        "Construction",
+      ],
+    };
+  },
+
+  methods: {
+    async getCal() {
+      var skillCount = 0;
+      await this.fetchCal();
+
+      this.calResult = this.calResult
+        .replace(/\n/g, " ")
+        .split(" ")
+        .map((str) => ({
+          rank: str.split(",")[0],
+          level: str.split(",")[1],
+          exp: str.split(",")[2],
+          id: this.skills[skillCount++],
+        }))
+        .slice(0, 24);
+    },
+
+    fetchCal() {
+      var result = fetch(
+        "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=hosama0"
+      )
+        .then((response) => response.text())
+        .then((data) => (this.calResult = data))
+        .catch((err) => console.log(err.message));
+      return result;
+    },
+
+    async getTown() {
+      var skillCount = 0;
+      await this.fetchTown();
+
+      this.townResult = this.townResult
+        .replace(/\n/g, " ")
+        .split(" ")
+        .map((str) => ({
+          rank: str.split(",")[0],
+          level: str.split(",")[1],
+          exp: str.split(",")[2],
+          id: this.skills[skillCount++],
+        }))
+        .slice(0, 24);
+    },
+
+    fetchTown() {
+      var result = fetch(
+        "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=unholy304"
+      )
+        .then((response) => response.text())
+        .then((data) => (this.townResult = data))
+        .catch((err) => console.log(err.message));
+      return result;
+    },
+  },
+
+  async mounted() {
+    this.getCal();
+    this.getTown();
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
