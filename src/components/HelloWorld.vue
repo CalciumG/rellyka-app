@@ -1,14 +1,46 @@
 <template>
   <div>
-    <div v-for="item in resultArray" :key="item.name">
-      <h1>{{ item.name }}</h1>
+    <template>
+      <v-row no-gutters>
+        <v-col cols="1">
+          <v-card class="mx-auto" max-width="400" id="card-component">
+            <v-list-item two-line>
+              <v-list-item-title class="text-h5"> Skill </v-list-item-title>
+            </v-list-item>
 
-      <div v-for="object in item" :key="object.id">
-        <div v-for="skill in object" :key="skill.id">
-          <h5 id="skill">{{ skill.id }} {{ skill.level }}</h5>
-        </div>
-      </div>
-    </div>
+            <v-list class="transparent">
+              <v-list-item v-for="skill in skills" :key="skill.id">
+                <v-list-item-icon>
+                  <v-icon>{{ skill }}</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list>
+
+            <v-divider></v-divider>
+          </v-card>
+        </v-col>
+
+        <v-col cols="1" v-for="item in resultArray" :key="item.id">
+          <v-card class="mx-auto" max-width="400" id="card-component">
+            <v-list-item two-line>
+              <v-list-item-title class="text-h5">
+                {{ item.name }}
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list class="transparent">
+              <v-list-item v-for="skill in item.props" :key="skill.id">
+                <v-list-item-icon>
+                  <v-icon>{{ skill.level }}</v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list>
+
+            <v-divider></v-divider>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
   </div>
 </template>
 
@@ -106,10 +138,9 @@ export default {
 
     Promise.all(this.resultArray).then((values) => {
       this.resultArray = values;
+      console.log(this.resultArray);
     });
   },
-
-  mounted() {},
 };
 </script>
 
