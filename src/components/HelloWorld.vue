@@ -1,71 +1,14 @@
 <template>
   <div>
-    <v-row no-gutters>
-      <v-col cols="12">
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th>Player</th>
-                <th v-for="item in calResult" :key="item.id" class="text-left">
-                  {{ item.id }}
-                </th>
-              </tr>
-            </thead>
+    <div v-for="item in resultArray" :key="item.name">
+      <h1>{{ item.name }}</h1>
 
-            <tbody>
-              <tr>
-                <td>Cal</td>
-                <td
-                  class="level"
-                  v-for="item in calResult"
-                  :key="item.id"
-                  ref="level"
-                >
-                  {{ item.level }}
-                </td>
-              </tr>
-            </tbody>
-
-            <tbody>
-              <tr>
-                <td>Town</td>
-                <td class="level" v-for="item in townResult" :key="item.id">
-                  {{ item.level }}
-                </td>
-              </tr>
-            </tbody>
-
-            <tbody>
-              <tr>
-                <td>Matt</td>
-                <td class="level" v-for="item in mattResult" :key="item.id">
-                  {{ item.level }}
-                </td>
-              </tr>
-            </tbody>
-
-            <tbody>
-              <tr>
-                <td>Phil</td>
-                <td class="level" v-for="item in philResult" :key="item.id">
-                  {{ item.level }}
-                </td>
-              </tr>
-            </tbody>
-
-            <tbody>
-              <tr>
-                <td>Dan</td>
-                <td class="level" v-for="item in djvResult" :key="item.id">
-                  {{ item.level }}
-                </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-col>
-    </v-row>
+      <div v-for="object in item" :key="object.id">
+        <div v-for="skill in object" :key="skill.id">
+          <h5 id="skill">{{ skill.id }} {{ skill.level }}</h5>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -78,12 +21,14 @@ export default {
 
   data() {
     return {
-      calResult: "",
-      townResult: "",
-      mattResult: "",
-      philResult: "",
-      djvResult: "",
-      names: ["hosama0", "unholy304"],
+      resultArray: [],
+      names: [
+        "hosama0",
+        "unholy304",
+        "Merlin007100",
+        "Philcold23",
+        "Dee Jay Vee",
+      ],
       result: {},
       baseUrl:
         "https://rellyka.herokuapp.com/https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=",
@@ -117,12 +62,11 @@ export default {
   },
 
   methods: {
-    fetchUser(user, res) {
-      res = fetch(this.baseUrl + user)
+    fetchUser(user) {
+      return fetch(this.baseUrl + user)
         .then((response) => response.text())
-        .then((data) => (res = data))
+        .then((data) => (this.arrayResult = data))
         .catch((err) => console.log(err.message));
-      return res;
     },
 
     formatResult(str) {
@@ -139,45 +83,33 @@ export default {
         .slice(0, 24);
     },
 
-    async getCal(user, res) {
-      this.calResult = await this.fetchUser(user, res);
-      this.calResult = this.formatResult(this.calResult);
+    async getUser(user) {
+      let result = await this.fetchUser(user);
+      result = this.formatResult(result);
+      let final = {
+        name: user,
+        props: result,
+      };
+      return final;
     },
 
-    async getTown(user, res) {
-      this.townResult = await this.fetchUser(user, res);
-      this.townResult = this.formatResult(this.townResult);
-    },
-
-    async getMatt(user, res) {
-      this.mattResult = await this.fetchUser(user, res);
-      this.mattResult = this.formatResult(this.mattResult);
-    },
-
-    async getPhil(user, res) {
-      this.philResult = await this.fetchUser(user, res);
-      this.philResult = this.formatResult(this.philResult);
-    },
-
-    async getVol(user, res) {
-      this.djvResult = await this.fetchUser(user, res);
-      this.djvResult = this.formatResult(this.djvResult);
+    getData() {
+      this.names.forEach((name) => {
+        this.resultArray.push(this.getUser(name));
+      });
+      return this.resultArray;
     },
   },
 
-  mounted() {
-    this.$nextTick(() => {
-      console.log(this.$refs.level);
+  created() {
+    this.getData();
+
+    Promise.all(this.resultArray).then((values) => {
+      this.resultArray = values;
     });
   },
 
-  async created() {
-    this.getCal("Hosama0", this.calResult);
-    this.getTown("Unholy304", this.townResult);
-    this.getMatt("Merlin007100", this.mattResult);
-    this.getPhil("Philcold23", this.philResult);
-    this.getVol("Dee Jay Vee", this.djvResult);
-  },
+  mounted() {},
 };
 </script>
 
