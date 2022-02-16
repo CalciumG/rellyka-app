@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template>
+    <!-- <template>
       <v-row no-gutters>
         <v-col cols="1">
           <v-card class="mx-auto" max-width="400" id="card-component">
@@ -40,7 +40,8 @@
           </v-card>
         </v-col>
       </v-row>
-    </template>
+    </template> -->
+    This is broken for today.
   </div>
 </template>
 
