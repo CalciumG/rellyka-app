@@ -1,8 +1,8 @@
 <template>
   <div>
-    <!-- <template>
+    <template>
       <v-row no-gutters>
-        <v-col cols="1">
+        <v-col cols="2">
           <v-card class="mx-auto" max-width="400" id="card-component">
             <v-list-item two-line>
               <v-list-item-title class="text-h5"> Skill </v-list-item-title>
@@ -20,7 +20,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="1" v-for="item in resultArray" :key="item.id">
+        <v-col cols="2" v-for="item in resultArray" :key="item.id">
           <v-card class="mx-auto" max-width="400" id="card-component">
             <v-list-item two-line>
               <v-list-item-title class="text-h5">
@@ -40,8 +40,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </template> -->
-    This is broken for today.
+    </template>
   </div>
 </template>
 
